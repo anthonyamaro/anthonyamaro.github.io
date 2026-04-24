@@ -31,7 +31,7 @@
 </head>
 <body>
   <canvas id="space"></canvas>
-  <h1 id="welcome"></h1>
+  <h1 id="welcome losers"></h1>
 
   <script>
     // Canvas setup
