@@ -2,14 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Space Welcome</title>
+  <title>Welcome</title>
   <style>
     body {
       margin: 0;
       overflow: hidden;
       background: black;
-      font-family: Arial, sans-serif;
-      color: white;
+      font-family: monospace;
     }
 
     canvas {
@@ -18,94 +17,65 @@
       left: 0;
     }
 
-    h1 {
+    .welcome {
       position: absolute;
-      width: 100%;
-      text-align: center;
       top: 50%;
-      transform: translateY(-50%);
-      font-size: 3rem;
-      letter-spacing: 3px;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #00ff00;
+      font-size: 3em;
+      text-shadow: 0 0 10px #00ff00;
+      z-index: 1;
     }
   </style>
 </head>
 <body>
-  <canvas id="space"></canvas>
-  <h1 id="welcome losers"></h1>
 
-  <script>
-    // Canvas setup
-    const canvas = document.getElementById("space");
-    const ctx = canvas.getContext("2d");
+<div class="welcome">Welcome</div>
+<canvas id="matrix"></canvas>
 
+<script>
+  const canvas = document.getElementById("matrix");
+  const ctx = canvas.getContext("2d");
+
+  canvas.height = window.innerHeight;
+  canvas.width = window.innerWidth;
+
+  const letters = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const fontSize = 16;
+  const columns = canvas.width / fontSize;
+
+  const drops = [];
+  for (let i = 0; i < columns; i++) {
+    drops[i] = 1;
+  }
+
+  function draw() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "#0F0";
+    ctx.font = fontSize + "px monospace";
+
+    for (let i = 0; i < drops.length; i++) {
+      const text = letters.charAt(Math.floor(Math.random() * letters.length));
+      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+        drops[i] = 0;
+      }
+
+      drops[i]++;
+    }
+  }
+
+  setInterval(draw, 33);
+
+  window.addEventListener("resize", () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+  });
+</script>
 
-    let stars = [];
-
-    // Create stars
-    for (let i = 0; i < 200; i++) {
-      stars.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        z: Math.random() * canvas.width
-      });
-    }
-
-    function drawStars() {
-      ctx.fillStyle = "black";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      ctx.fillStyle = "white";
-
-      for (let i = 0; i < stars.length; i++) {
-        let star = stars[i];
-
-        star.z -= 2;
-
-        if (star.z <= 0) {
-          star.z = canvas.width;
-        }
-
-        let k = 128.0 / star.z;
-        let px = star.x * k + canvas.width / 2;
-        let py = star.y * k + canvas.height / 2;
-
-        if (px >= 0 && px <= canvas.width && py >= 0 && py <= canvas.height) {
-          let size = (1 - star.z / canvas.width) * 3;
-          ctx.beginPath();
-          ctx.arc(px, py, size, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      }
-    }
-
-    function animate() {
-      drawStars();
-      requestAnimationFrame(animate);
-    }
-
-    animate();
-
-    // Typing effect for "Welcome"
-    const text = "Welcome";
-    let i = 0;
-
-    function typeEffect() {
-      if (i < text.length) {
-        document.getElementById("welcome").textContent += text.charAt(i);
-        i++;
-        setTimeout(typeEffect, 150);
-      }
-    }
-
-    typeEffect();
-
-    // Resize handling
-    window.addEventListener("resize", () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    });
-  </script>
 </body>
 </html>
